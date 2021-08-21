@@ -1,0 +1,11 @@
+#ifndef CONSTANTS_HPP
+#define CONSTANTS_HPP
+
+#define SEQ_READ_SIZE 82
+#define REF_READ_SIZE 70
+
+#define SAM_COLUMN_POSITION 3
+#define SAM_COLUMN_CIGAR    5
+#define SAM_COLUMN_SEQUENCE 9
+
+#endif // CONSTANTS_HPP
