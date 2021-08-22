@@ -42,7 +42,8 @@ void VariantHandler::call(
         switch (cigarEntry.first) {
         case Cigar::Op::Match:
             for (int i = 0; i < basesLeft; ++i) {
-                if (ref[refPos + i] == alt[altPos + i])
+                if (ref[refPos + i] == alt[altPos + i] || ref[refPos + i] == WILDCARD_NUCLEOTIDE
+                    || alt[altPos + i] == WILDCARD_NUCLEOTIDE)
                     continue;
                 save(readPos + refPos + i, ref.substr(refPos + i, 1), alt.substr(altPos + i, 1));
             }

@@ -26,7 +26,7 @@ class VariantHandler : public OutFileHandler
 public:
     VariantHandler(const std::string & path);
     void call(size_t readPos, const std::string & ref, const std::string & alt, const Cigar::Entries & cigarEntries);
-    void save(size_t pos, const std::string & ref, const std::string & alt);
+    virtual void save(size_t pos, const std::string & ref, const std::string & alt);
 
 private:
     std::unordered_set<Variant, VariantHash> m_set;

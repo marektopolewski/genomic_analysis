@@ -8,4 +8,6 @@
 #define SAM_COLUMN_CIGAR    5
 #define SAM_COLUMN_SEQUENCE 9
 
+#define WILDCARD_NUCLEOTIDE 'N'
+
 #endif // CONSTANTS_HPP
