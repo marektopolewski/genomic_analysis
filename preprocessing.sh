@@ -1,20 +1,20 @@
 #!/bin/sh
 
 # setup downoald location
-if [ -d "data" ]; then
-    printf "Directory exists, are you sure you want to clear it? (y/N) "
-    read ALLOW_CLEAR
-    if [[ "$ALLOW_CLEAR" != "y" ]] && [[ "$ALLOW_CLEAR" != "Y" ]]; then
-        echo "Exiting..."
-        exit 1
-    fi
-    rm -rf data/*
-else
-    mkdir -p data
-fi
-cd data/
-mkdir chr5 chr20 chrX
-cd ../
+# if [ -d "data" ]; then
+#     printf "Directory exists, are you sure you want to clear it? (y/N) "
+#     read ALLOW_CLEAR
+#     if [[ "$ALLOW_CLEAR" != "y" ]] && [[ "$ALLOW_CLEAR" != "Y" ]]; then
+#         echo "Exiting..."
+#         exit 1
+#     fi
+#     rm -rf data/*
+# else
+#     mkdir -p data
+# fi
+# cd data/
+# mkdir chr5 chr20 chrX
+# cd ../
 
 while IFS= read -r line
 do

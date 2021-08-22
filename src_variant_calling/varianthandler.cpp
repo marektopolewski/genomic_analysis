@@ -2,40 +2,17 @@
 
 #include "constants.hpp"
 
-// Variant::Variant(size_t pos, std::string ref, std::string alt)
-//     : pos(pos)
-//     , ref(ref)
-//     , alt(alt)
-// {}
-
-// inline std::ostream & operator<<(std::ostream & os, const Variant & snp)
-// {
-//     return os << "c." << snp.pos << " " << snp.ref << ">" << snp.alt;
-// }
-
-// inline bool operator==(const Variant & lhs, const Variant & rhs)
-// {
-//     return lhs.pos == rhs.pos && lhs.ref == rhs.ref && lhs.alt == rhs.alt;
-// }
-
-
-// size_t VariantHash::operator()(const Variant & snp) const
-// {
-//     return ((std::hash<size_t>()(snp.pos) ^ (std::hash<std::string>()(snp.ref) << 1)) >> 1)
-//         ^ (std::hash<std::string>()(snp.alt) << 1);
-// }
-
+#define BATCH_SIZE 100
 
 VariantHandler::VariantHandler(const std::string & path)
     : OutFileHandler(path)
 {}
 
-void VariantHandler::call(
-    size_t readPos,
-    const std::string & prefix,
-    const std::string & ref,
-    const std::string & alt,
-    const Cigar::Entries & cigarEntries)
+void VariantHandler::call(size_t readPos,
+                          const std::string & prefix,
+                          const std::string & ref,
+                          const std::string & alt,
+                          const Cigar::Entries & cigarEntries)
 {
     int refPos = 0, altPos = 0;
     for (const auto & cigarEntry : cigarEntries) {
@@ -76,10 +53,34 @@ void VariantHandler::call(
             break;
         }
     }
+
+    // Check if should flush to disk
+    if (++m_iterSinceFlush >= BATCH_SIZE)
+        flush(readPos);
 }
 
 void VariantHandler::save(size_t pos, const std::string & ref, const std::string & alt)
 {
-    // m_set.emplace(pos, ref, alt);
-    m_file << pos << '\t' << ref << '\t' << alt << '\n';
+    std::string variant;
+    variant += ref;
+    variant += "\t";
+    variant += alt;
+    m_set.emplace(pos, ref + "\t" + alt);
+}
+
+void VariantHandler::flush(size_t lastPos)
+{
+    m_iterSinceFlush = 0;
+    auto entryIt = m_set.begin();
+    for (; entryIt != m_set.end(); ++entryIt) {
+        if (entryIt->pos + SEQ_READ_SIZE >= lastPos)
+            break;
+        write(*entryIt);
+    }
+    m_set.erase(m_set.begin(), entryIt);
+}
+
+void VariantHandler::write(const VariantEntry & entry)
+{
+    m_file << entry.pos << "\t" << entry.variant << "\n";
 }
