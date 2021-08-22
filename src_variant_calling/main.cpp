@@ -46,9 +46,11 @@ int main (int argc, char * argv[])
     while (seqHandler.next()) {
         Cigar cigar{seqHandler.getCigar()};
         refHandler.seek(seqHandler.getPosition());
-        auto refSeq = refHandler.getSequence();
-        auto samSeq = seqHandler.getSequence();
-        variantHandler.call(seqHandler.getPosition(), refSeq, samSeq, cigar.getEntries());
+        variantHandler.call(seqHandler.getPosition(),
+                            refHandler.getPrefix(),
+                            refHandler.getSequence(),
+                            seqHandler.getSequence(),
+                            cigar.getEntries());
     }
 
     return 0;
