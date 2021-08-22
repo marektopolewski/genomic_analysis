@@ -2,26 +2,11 @@
 #define VARIANT_HANDLER_HPP
 
 #include "cigar.hpp"
-#include "filehandler.hpp"
+#include "../src_shared/filehandler.hpp"
+#include "../src_shared/variant.hpp"
 
 #include <set>
 #include <string>
-
-struct VariantEntry
-{
-    VariantEntry(int pos, const std::string & variant) : pos(pos), variant(variant) {}
-    int pos;
-    std::string variant;
-};
-
-struct VariantEntryComparator
-{
-    bool operator()(const VariantEntry & lhs, const VariantEntry & rhs) const {
-        if (lhs.pos == rhs.pos)
-            return lhs.variant < rhs.variant;
-        return lhs.pos < rhs.pos;
-    }
-};
 
 class VariantHandler : public OutFileHandler
 {

@@ -3,3 +3,4 @@ data/
 .vscode/
 bin/
 variants/
+output/

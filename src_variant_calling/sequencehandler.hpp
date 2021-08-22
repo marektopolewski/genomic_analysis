@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_HANDLER_HPP
 #define SEQUENCE_HANDLER_HPP
 
-#include "filehandler.hpp"
+#include "../src_shared/filehandler.hpp"
 
 #include <fstream>
 #include <string>
