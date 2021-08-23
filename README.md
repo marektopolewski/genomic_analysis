@@ -11,7 +11,8 @@ BAM files from Google Cloud Storage (GCS) using the following script:
 gcloud auth login
 ./preprocessing.sh
 ```
-GsUtil is required, for installation help follow: https://cloud.google.com/storage/docs/gsutil_install
+GsUtil and SAMTools are required, for installation help follow
+https://cloud.google.com/storage/docs/gsutil_install and http://www.htslib.org/download/ respectively.
 
 The output SAM files will be places in `data/` directory and in respective chromosome subdirectories.
 
@@ -44,4 +45,3 @@ To execute the entire pipeline with a single command use:
 ```
 ./preprocessing.sh && ./fetchreference.sh && ./callvariants.sh && ./analysis.sh
 ```
-
