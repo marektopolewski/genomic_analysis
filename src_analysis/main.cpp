@@ -4,7 +4,7 @@
 #include <string>
 
 #define BATCH_SIZE 100
-#define SIGNIFICANCE_RATIO 0.5
+#define SIGNIFICANCE_RATIO 0
 
 int main(int argc, char * argv[])
 {
