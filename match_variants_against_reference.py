@@ -63,6 +63,8 @@ for _, row in df_ref.iterrows():
                     print(f"ERR expected alt {alt} chr {chr} at position {pos}, " +
                           f"none matches:\n{vrow.alt}")
                     alt_mismatches += 1
+    else:
+        print(f"ERR record {chr, pos, ref, alt} not found")
 
 
 # Print results

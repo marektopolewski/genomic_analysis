@@ -9,7 +9,9 @@ namespace test
 class Fixture : public Analyser
 {
 public:
-    Fixture(double sigRatio = 0) : Analyser("", "", 2, sigRatio) {}
+    Fixture(size_t regionStart = 0, size_t regionEnd = INT_MAX)
+        : Analyser("", "", 2, regionStart, regionEnd) {
+    }
 
     bool openVcfFile(const std::string & path) {
         m_vcfFiles.emplace_back(path);
@@ -62,11 +64,22 @@ void multipleOccurrences()
     fixture.start();
 
     assert(fixture.variants.size() == 14);
-    assert(fixture.variants[0] == "280 C\tTT 2");
-    assert(fixture.variants[1] == "280 G\tT 2");
     assert(fixture.variants[2] == "280 T\tA 1");
     assert(fixture.variants[3] == "280 T\tC 1");
     assert(fixture.variants[4] == "280 T\tG 1");
+}
+
+void regionsOfInterestAreRespected()
+{
+    Fixture fixture(331, 354);
+
+    assert(fixture.openVcfFile("tests/test.1.vcf"));
+
+    fixture.start();
+
+    assert(fixture.variants.size() == 2);
+    assert(fixture.variants[0] == "331 T\tA 1");
+    assert(fixture.variants[1] == "345 C\tA 1");
 }
 
 } // namespace test
@@ -77,5 +90,6 @@ int main()
     test::sameFileTwice();
     test::samePositionDifferentMutation();
     test::multipleOccurrences();
+    test::regionsOfInterestAreRespected();
     std::cout << "[TEST] OK\n";
 }

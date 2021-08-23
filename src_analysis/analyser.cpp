@@ -3,11 +3,13 @@
 Analyser::Analyser(const std::string & outputPath,
                    const std::string & chromosome,
                    size_t batchSize,
-                   double significanceRatio)
+                   size_t regionStart,
+                   size_t regionEnd)
     : OutFileHandler(outputPath)
     , m_chromosome(chromosome)
     , m_batchSize(batchSize)
-    , m_significanceRatio(significanceRatio)
+    , m_regionStart(regionStart)
+    , m_regionEnd(regionEnd)
 {}
 
 bool Analyser::openVcfFiles(const std::string & metadataPath)
@@ -36,7 +38,7 @@ void Analyser::start()
     std::vector<bool> vcfFilesComplete(m_vcfFiles.size(), false);
 
     // Read files sequentially in batches until no lines remain
-    while(outputUpdated) {
+    while (outputUpdated) {
         outputUpdated = false;
         m_minPos = INT_MAX;
         for (int i = 0; i < m_vcfFiles.size(); ++i) {
@@ -67,7 +69,6 @@ void Analyser::write(const VariantEntry & entry, size_t count)
     m_file << entry.pos << "\t" << entry.variant << "\t" << count << "\n";
 }
 
-
 bool Analyser::batchRead(size_t vcfFileIt)
 {
     int it = 0, delimPos1, delimPos2;
@@ -85,8 +86,9 @@ bool Analyser::batchRead(size_t vcfFileIt)
         if (m_minPos > pos)
             m_minPos = pos;
 
-        // Record variant
-        ++m_counts[{ pos, variant }];
+        // Record variant if in a region of interest
+        if (m_regionStart <= pos && pos <= m_regionEnd)
+            ++m_counts[{ pos, variant }];
         ++it;
     }
     return false;
@@ -99,10 +101,6 @@ void Analyser::flushWrite()
         // Stop if reached a position that may overlap
         if (it->first.pos >= m_minPos)
             break;
-
-        // Ignore if insufficiently frequent variant
-        if (it->second < m_vcfFiles.size() * m_significanceRatio)
-            continue;
 
         // Write to disk
         write(it->first, it->second);

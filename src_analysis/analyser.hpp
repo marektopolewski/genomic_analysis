@@ -14,7 +14,8 @@ public:
     Analyser(const std::string & outputPath,
              const std::string & chromosome,
              size_t batchSize,
-             double significanceRatio);
+             size_t regionStart = 0,
+             size_t regionEnd = INT_MAX);
 
     bool openVcfFiles(const std::string & metadataPath);
     void start();
@@ -30,7 +31,8 @@ private:
 
     std::string m_chromosome;
     size_t m_batchSize;
-    double m_significanceRatio;
+    size_t m_regionStart;
+    size_t m_regionEnd;
 
     std::map<VariantEntry, size_t, VariantEntryComparator> m_counts;
     size_t m_minPos;
