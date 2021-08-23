@@ -1,4 +1,5 @@
 #include "cigar.hpp"
+#include "constants.hpp"
 #include "sequencehandler.hpp"
 #include "referencehandler.hpp"
 #include "varianthandler.hpp"
@@ -22,28 +23,34 @@ int main (int argc, char * argv[])
     auto outputPath = argv[3];
 
     // Init object for parsing the read sequences (SAM)
-    SequenceHandler seqHandler(sequencePath); // "SRR8691809.5.sam"
+    SequenceHandler seqHandler(sequencePath);
     if (!seqHandler.valid()) {
         std::cerr << "Could not open the SAM file with sequence reads.\n";
         return -1;
     }
 
     // Init object for parsing the reference sequence
-    ReferenceHandler refHandler(referencePath); // "chr5_ref_sequence_oneline.fasta"
+    ReferenceHandler refHandler(referencePath);
     if (!refHandler.valid()) {
         std::cerr << "Could not open the reference genome FASTA file.\n";
         return -1;
     }
 
     // Init object for variant calling
-    VariantHandler variantHandler(outputPath); // ""
+    VariantHandler variantHandler(outputPath);
     if (!variantHandler.valid())  {
         std::cerr << "Could not open the output file.\n";
         return -1;
     }
 
     // Iteratively call variants
+    int ignored = 0, all = 0;
     while (seqHandler.next()) {
+        ++all;
+        if (seqHandler.getMapQuality() < MAP_QUALITY_THRESHOLD) {
+            ++ignored;
+            continue;
+        }
         Cigar cigar{seqHandler.getCigar()};
         refHandler.seek(seqHandler.getPosition());
         variantHandler.call(seqHandler.getPosition(),
@@ -52,6 +59,8 @@ int main (int argc, char * argv[])
                             seqHandler.getSequence(),
                             cigar.getEntries());
     }
+
+    std::cout << "Called variants on " << (all - ignored) << "/" << all << " reads\n";
 
     return 0;
 }

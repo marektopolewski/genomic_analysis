@@ -11,15 +11,17 @@ class SequenceHandler : public InFileHandler
 public:
     SequenceHandler(const std::string & path);
 
-    std::string getSequence();
     size_t getPosition();
+    size_t getMapQuality();
     std::string getCigar();
+    std::string getSequence();
 
     bool next();
     void reset();
 
 private:
-    int m_position;
+    size_t m_position;
+    size_t m_mapq;
     std::string m_cigar;
     std::string m_sequence;
 };

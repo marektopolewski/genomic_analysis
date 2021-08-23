@@ -7,10 +7,11 @@
 g++ -std=c++14 main.cpp \
     cigar.cpp \
     constants.cpp \
-    filehandler.cpp \
     referencehandler.cpp \
     sequencehandler.cpp \
     varianthandler.cpp \
+    ../src_shared/filehandler.cpp \
+    ../src_shared/variant.cpp \
 -o ../bin/variantcall
 
 
@@ -23,17 +24,18 @@ if [ ! -d "tests/bin" ]; then
 fi
 
 g++ -std=c++14 tests/sequencehandler.cpp \
-    filehandler.cpp \
     sequencehandler.cpp \
+    ../src_shared/filehandler.cpp \
 -o tests/bin/test_sequencehandler
 
 g++ -std=c++14 tests/referencehandler.cpp \
-    filehandler.cpp \
     referencehandler.cpp \
+    ../src_shared/filehandler.cpp \
 -o tests/bin/test_referencehandler
 
 g++ -std=c++14 tests/varianthandler.cpp \
     cigar.cpp \
-    filehandler.cpp \
     varianthandler.cpp \
+    ../src_shared/filehandler.cpp \
+    ../src_shared/variant.cpp \
 -o tests/bin/test_varianthandler
