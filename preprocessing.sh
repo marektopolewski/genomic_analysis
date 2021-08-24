@@ -16,6 +16,14 @@ cd data/
 mkdir chr5 chr20 chrX
 cd ../
 
+# Regions of interest as per gene locations
+TP53_START_POS="32561406"
+TP53_END_POS="32565149"
+SETD2_START_POS="41675539"
+SETD2_END_POS="41800697"
+DMD_START_POS="26290903"
+DMD_END_POS="28444635"
+
 while IFS= read -r line
 do
     # get file path
@@ -37,9 +45,9 @@ do
     SAM_20_FILE="chr20/$(echo "$BAM_FILE" | sed "s/.bam/.chr20.sam/")"
     SAM_X_FILE="chrX/$(echo "$BAM_FILE" | sed "s/.bam/.chrX.sam/")"
     samtools index $BAM_FILE
-    samtools view $BAM_FILE 5 > $SAM_5_FILE
-    samtools view $BAM_FILE 20 > $SAM_20_FILE
-    samtools view $BAM_FILE X > $SAM_X_FILE
+    samtools view $BAM_FILE 5:$TP53_START_POS-$TP53_END_POS > $SAM_5_FILE
+    samtools view $BAM_FILE 20:$SETD2_START_POS-$SETD2_END_POS > $SAM_20_FILE
+    samtools view $BAM_FILE X:$DMD_START_POS-$DMD_END_POS > $SAM_X_FILE
 
     # remove original BAM file
     rm $BAM_FILE "$BAM_FILE.bai"
