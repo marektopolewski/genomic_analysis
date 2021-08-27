@@ -6,7 +6,7 @@ CHROMOSOMES = ["5", "20", "X"]
 # Source: https://www.nature.com/articles/s42003-019-0487-2#MOESM10
 print("Loading reference variants... ", end="")
 df_ref = pd.read_csv("reference_variants.csv", sep=";", header=None,
-                     names=["chr", "pos", "ref", "alt"])
+                     names=["chr", "pos", "ref", "alt", "gene"])
 print("done.")
 
 # Read called variants files
@@ -22,8 +22,9 @@ print()
 # Count reference (major) and alternative (minor) allele mismatches
 ref_mismatches = 0
 alt_mismatches = 0
+missing = 0
 for _, row in df_ref.iterrows():
-    chr, pos, ref, alt = row
+    chr, pos, ref, alt, gene = row
     if chr not in CHROMOSOMES:
         continue
 
@@ -64,18 +65,19 @@ for _, row in df_ref.iterrows():
                           f"none matches:\n{vrow.alt}")
                     alt_mismatches += 1
     else:
-        print(f"ERR record {chr, pos, ref, alt} not found")
+        print(f"ERR record {chr, pos, ref, alt, gene} not found")
+        missing += 1
 
 
 # Print results
 size = len(df_ref)
+mismatches = ref_mismatches + alt_mismatches + missing
 print()
-print(f"Refs matched {size - ref_mismatches} out of {size}, " +
-      f"percentage: { (size - ref_mismatches) / size * 100 }")
-print(f"Alts matched {size - alt_mismatches} out of {size}, " +
-      f"percentage: { (size - alt_mismatches) / size * 100 }")
-print(f"Total matched {size - alt_mismatches - ref_mismatches} out of {size}, " +
-      f"percentage: { (size - alt_mismatches - ref_mismatches) / size * 100 }")
+print(f"Refs mismatched {ref_mismatches}")
+print(f"Alts mismatched {alt_mismatches}")
+print(f"Records missing {missing}")
+print(f"Total matched {size - mismatches} out of {size}, " +
+      f"percentage: { (size - mismatches) / size * 100 }")
 
 # Refs matched 180 out of 184, percentage: 97.83
 # Alts matched 167 out of 184, percentage: 90.76
