@@ -66,7 +66,7 @@ size_t Analyser::sampleCount()
 
 void Analyser::write(const VariantEntry & entry, size_t count)
 {
-    m_file << entry.pos << "\t" << entry.variant << "\t" << count << "\n";
+    m_file << entry.pos << "," << entry.variant << "," << count << "\n";
 }
 
 bool Analyser::batchRead(size_t vcfFileIt)
@@ -80,7 +80,7 @@ bool Analyser::batchRead(size_t vcfFileIt)
             return true;
 
         // Parse string and update minimal position currently in memory
-        auto delimPos = variantStr.find('\t', 0);
+        auto delimPos = variantStr.find(',', 0);
         auto pos = std::stoi(variantStr.substr(0, delimPos));
         auto variant = variantStr.substr(delimPos + 1, variantStr.length() - delimPos - 1);
         if (m_minPos > pos)

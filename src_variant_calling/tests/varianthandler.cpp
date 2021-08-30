@@ -14,7 +14,6 @@ public:
     void write(const VariantEntry & entry) override {
         variants.push_back(std::to_string(entry.pos) + " " + entry.variant);
     }
-    void forceFlush() { VariantHandler::flush(INT_MAX); }
     void flush(size_t pos) { VariantHandler::flush(pos); }
     std::vector<std::string> variants;
 };
@@ -46,8 +45,8 @@ void matchVariant()
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
 
-    assert(fixture.variants[0] == "143 T\tA");
-    assert(fixture.variants[1] == "144 T\tA");
+    assert(fixture.variants[0] == "143 T,A");
+    assert(fixture.variants[1] == "144 T,A");
 }
 
 void insertVariant()
@@ -62,7 +61,7 @@ void insertVariant()
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
 
-    assert(fixture.variants[0] == "143 T\tTGT");
+    assert(fixture.variants[0] == "143 T,TGT");
 }
 
 void deleteVariant()
@@ -77,7 +76,7 @@ void deleteVariant()
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
 
-    assert(fixture.variants[0] == "143 TTTT\tT");
+    assert(fixture.variants[0] == "143 TTTT,T");
 }
 
 void startsWithInsertVariant()
@@ -92,7 +91,7 @@ void startsWithInsertVariant()
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
 
-    assert(fixture.variants[0] == "123 A\tATCG");
+    assert(fixture.variants[0] == "123 A,ATCG");
 }
 
 void startsWithDeleteVariant()
@@ -107,7 +106,7 @@ void startsWithDeleteVariant()
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
 
-    assert(fixture.variants[0] == "123 ATCG\tA");
+    assert(fixture.variants[0] == "123 ATCG,A");
 }
 
 void variantsNotFlushedTooEarly()
@@ -130,11 +129,11 @@ void variantsNotFlushedTooEarly()
 
     fixture.flush(220 + 99);
     assert(fixture.variants.size() == 1);
-    assert(fixture.variants[0] == "220 T\tA");
+    assert(fixture.variants[0] == "220 T,A");
 
     fixture.flush(420 + 83);
-    assert(fixture.variants[0] == "220 T\tA");
-    assert(fixture.variants[1] == "320 T\tA");
+    assert(fixture.variants[0] == "220 T,A");
+    assert(fixture.variants[1] == "320 T,A");
 }
 
 void variantsNotDuplicated()
@@ -155,7 +154,7 @@ void variantsNotDuplicated()
 
     fixture.flush(220 + 83);
     assert(fixture.variants.size() == 1);
-    assert(fixture.variants[0] == "220 T\tA");
+    assert(fixture.variants[0] == "220 T,A");
 }
 
 } // namespace test

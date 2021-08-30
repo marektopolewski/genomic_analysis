@@ -14,6 +14,8 @@ public:
     VariantHandler(const std::string & path);
     void call(size_t readPos, const std::string & prefix, const std::string & ref,
               const std::string & alt, const Cigar::Entries & cigarEntries);
+    void forceFlush() { flush(INT_MAX); }
+
 protected:
     virtual void write(const VariantEntry & entry);
     void flush(size_t lastPos);

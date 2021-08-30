@@ -63,9 +63,9 @@ void VariantHandler::save(size_t pos, const std::string & ref, const std::string
 {
     std::string variant;
     variant += ref;
-    variant += "\t";
+    variant += ",";
     variant += alt;
-    m_set.emplace(pos, ref + "\t" + alt);
+    m_set.emplace(pos, std::move(variant));
 }
 
 void VariantHandler::flush(size_t lastPos)
@@ -82,5 +82,5 @@ void VariantHandler::flush(size_t lastPos)
 
 void VariantHandler::write(const VariantEntry & entry)
 {
-    m_file << entry.pos << "\t" << entry.variant << "\n";
+    m_file << entry.pos << "," << entry.variant << "\n";
 }

@@ -59,6 +59,7 @@ int main (int argc, char * argv[])
                             seqHandler.getSequence(),
                             cigar.getEntries());
     }
+    variantHandler.forceFlush();
 
     std::cout << "Called variants on " << (all - ignored) << "/" << all << " reads\n";
 

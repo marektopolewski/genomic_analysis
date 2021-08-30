@@ -14,7 +14,7 @@ df_chrs = dict()
 for chr in CHROMOSOMES:
     print(f"Loading chromosome {chr} variants... ", end="")
     df_chrs[chr] = pd.read_csv(f"output/variant_counts.chr{chr}.csv",
-                               sep="\t", header=None, usecols=[0,1,2],
+                               sep=",", header=None, usecols=[0,1,2],
                                names=["pos", "ref", "alt"], index_col="pos")
     print("done.")
 print()
