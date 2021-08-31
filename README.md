@@ -14,13 +14,8 @@ gcloud auth login
 GsUtil and SAMTools are required, for installation help follow
 https://cloud.google.com/storage/docs/gsutil_install and http://www.htslib.org/download/ respectively.
 
-The output SAM files will be places in `data/` directory and in respective chromosome subdirectories.
-
-Subsequently, the reference genome has to be downloaded. Desired chromosomes can be fetched separately
-using this command:
-```
-./fetchreference.sh
-```
+The output SAM files will be places in `data/` directory and in respective chromosome subdirectories. The
+above command will also download the desired reference chromosome genotypes.
 
 
 #### Variant calling
