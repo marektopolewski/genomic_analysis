@@ -5,6 +5,7 @@
 #include "../src_shared/filehandler.hpp"
 #include "../src_shared/variant.hpp"
 
+#include <climits>
 #include <set>
 #include <string>
 

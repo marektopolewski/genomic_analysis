@@ -2,6 +2,8 @@
 
 #include "constants.hpp"
 
+#include <cassert>
+
 #define BATCH_SIZE 100
 
 VariantHandler::VariantHandler(const std::string & path)

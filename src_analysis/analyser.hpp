@@ -4,6 +4,7 @@
 #include "../src_shared/filehandler.hpp"
 #include "../src_shared/variant.hpp"
 
+#include <climits>
 #include <fstream>
 #include <vector>
 #include <map>

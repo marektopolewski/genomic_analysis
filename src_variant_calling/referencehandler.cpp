@@ -1,5 +1,8 @@
 #include "referencehandler.hpp"
 
+#include <cassert>
+#include <cstring>
+
 ReferenceHandler::ReferenceHandler(const std::string & path)
     : InFileHandler(path)
 {
