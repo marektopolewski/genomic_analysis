@@ -12,7 +12,7 @@
 class VariantHandler : public OutFileHandler
 {
 public:
-    VariantHandler(const std::string & path);
+    VariantHandler(const std::string & path, int seqLen);
     void call(size_t readPos, const std::string & prefix, const std::string & ref,
               const std::string & alt, const Cigar::Entries & cigarEntries);
     void forceFlush() { flush(INT_MAX); }
@@ -26,6 +26,8 @@ private:
 
     std::set<VariantEntry, VariantEntryComparator> m_set;
     int m_iterSinceFlush = 0;
+
+    int m_seqLen;
 };
 
 #endif // VARIANT_HANDLER_HPP

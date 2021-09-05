@@ -8,7 +8,7 @@ namespace test
 
 void readFirstSequence()
 {
-    ReferenceHandler fixture("tests/test.fasta");
+    ReferenceHandler fixture("tests/test.fasta", SHORT_SEQ_LEN);
     assert(fixture.valid());
 
     auto expSeq = std::string(20, 'A') + std::string(20, 'T') +
@@ -20,7 +20,7 @@ void readFirstSequence()
 
 void readOverlappingSequence()
 {
-    ReferenceHandler fixture("tests/test.fasta");
+    ReferenceHandler fixture("tests/test.fasta", SHORT_SEQ_LEN);
     assert(fixture.valid());
 
     fixture.seek(21);
@@ -34,7 +34,7 @@ void readOverlappingSequence()
 
 void readTheSameSequence()
 {
-    ReferenceHandler fixture("tests/test.fasta");
+    ReferenceHandler fixture("tests/test.fasta", SHORT_SEQ_LEN);
     assert(fixture.valid());
 
     fixture.seek(3);
@@ -49,7 +49,7 @@ void readTheSameSequence()
 
 void readNonOverlappingSequence()
 {
-    ReferenceHandler fixture("tests/test.fasta");
+    ReferenceHandler fixture("tests/test.fasta", SHORT_SEQ_LEN);
     assert(fixture.valid());
 
     fixture.seek(91);
@@ -61,6 +61,17 @@ void readNonOverlappingSequence()
     assert(fixture.getSequence() == expSeq);
 }
 
+void readLongerSequences()
+{
+    ReferenceHandler fixture("tests/test.fasta", LONG_SEQ_LEN);
+    assert(fixture.valid());
+
+    fixture.seek(21);
+    auto expSeq =  std::string(20, 'T') + std::string(20, 'C')
+        + std::string(29, 'G') + "X" + std::string(10, 'G')
+        + std::string(20, 'C') + std::string(31, 'T');
+}
+
 } // namespace test
 
 int main()
@@ -70,5 +81,6 @@ int main()
     test::readOverlappingSequence();
     test::readTheSameSequence();
     test::readNonOverlappingSequence();
+    test::readLongerSequences();
     std::cout << "[TEST] OK\n";
 }

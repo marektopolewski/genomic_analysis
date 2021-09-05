@@ -7,10 +7,12 @@
 #include <fstream>
 #include <string>
 
+#define SHORT_SEQ_LEN 82
+#define LONG_SEQ_LEN 151
 class ReferenceHandler : public InFileHandler
 {
 public:
-    ReferenceHandler(const std::string & path);
+    ReferenceHandler(const std::string & path, int seqLen);
 
     std::string getPrefix();
     std::string getSequence();
@@ -21,13 +23,15 @@ private:
     void read(const size_t & size);
     void readPrefix();
 
-    char m_buffer[SEQ_READ_SIZE + 1];
+    char * m_buffer;
     char m_prefixBuffer[2];
 
-    size_t m_startPos = 1;
-    size_t m_endPos = SEQ_READ_SIZE;
+    size_t m_startPos;
+    size_t m_endPos;
     std::string m_prefix;
     std::string m_sequence;
+
+    int m_seqLen;
 };
 
 #endif // REFERENCE_HANDLER_HPP

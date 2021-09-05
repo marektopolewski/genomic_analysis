@@ -6,8 +6,9 @@
 
 #define BATCH_SIZE 100
 
-VariantHandler::VariantHandler(const std::string & path)
+VariantHandler::VariantHandler(const std::string & path, int seqLen)
     : OutFileHandler(path)
+    , m_seqLen(seqLen)
 {}
 
 void VariantHandler::call(size_t readPos,
@@ -18,7 +19,7 @@ void VariantHandler::call(size_t readPos,
 {
     int refPos = 0, altPos = 0;
     for (const auto & cigarEntry : cigarEntries) {
-        auto basesLeft = std::min(SEQ_READ_SIZE - std::max(refPos, altPos), cigarEntry.second);
+        auto basesLeft = std::min(m_seqLen - std::max(refPos, altPos), cigarEntry.second);
         switch (cigarEntry.first) {
         case Cigar::Op::Match:
             for (int i = 0; i < basesLeft; ++i) {
@@ -75,7 +76,7 @@ void VariantHandler::flush(size_t lastPos)
     m_iterSinceFlush = 0;
     auto entryIt = m_set.begin();
     for (; entryIt != m_set.end(); ++entryIt) {
-        if (entryIt->pos + SEQ_READ_SIZE >= lastPos)
+        if (entryIt->pos + m_seqLen >= lastPos)
             break;
         write(*entryIt);
     }

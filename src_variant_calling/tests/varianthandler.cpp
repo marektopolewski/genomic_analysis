@@ -4,13 +4,19 @@
 #include <iostream>
 #include <vector>
 
+#define SHORT_SEQ_LEN 82
+#define LONG_SEQ_LEN 151
+
 namespace test
 {
+
+const std::string CIGAR_MATCH_SHORT = std::to_string(SHORT_SEQ_LEN) + "M";
+const std::string CIGAR_MATCH_LONG = std::to_string(LONG_SEQ_LEN) + "M";
 
 class Fixture : public VariantHandler
 {
 public:
-    Fixture() : VariantHandler("") {}
+    Fixture(int seqLen = SHORT_SEQ_LEN) : VariantHandler("", seqLen) {}
     void write(const VariantEntry & entry) override {
         variants.push_back(std::to_string(entry.pos) + " " + entry.variant);
     }
@@ -24,9 +30,9 @@ void noVariant()
 
     auto pos = 123;
     auto prefix = "A";
-    auto refSeq = std::string(82, 'T');
-    auto altSeq = std::string(82, 'T');
-    Cigar cigar("82M");
+    auto refSeq = std::string(SHORT_SEQ_LEN, 'T');
+    auto altSeq = std::string(SHORT_SEQ_LEN, 'T');
+    Cigar cigar(CIGAR_MATCH_SHORT);
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
 
@@ -39,9 +45,9 @@ void matchVariant()
 
     auto pos = 123;
     auto prefix = "A";
-    auto refSeq = std::string(82, 'T');
+    auto refSeq = std::string(SHORT_SEQ_LEN, 'T');
     auto altSeq = std::string(20, 'T') + "AA" + std::string(60, 'T');
-    Cigar cigar("82M");
+    Cigar cigar(CIGAR_MATCH_SHORT);
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
 
@@ -55,7 +61,7 @@ void insertVariant()
 
     auto pos = 123;
     auto prefix = "A";
-    auto refSeq = std::string(82, 'T');
+    auto refSeq = std::string(SHORT_SEQ_LEN, 'T');
     auto altSeq = std::string(20, 'T') + "GT" + std::string(60, 'T');
     Cigar cigar("20M2I60M");
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
@@ -70,8 +76,8 @@ void deleteVariant()
 
     auto pos = 123;
     auto prefix = "A";
-    auto refSeq = std::string(82, 'T');
-    auto altSeq = std::string(82, 'T');
+    auto refSeq = std::string(SHORT_SEQ_LEN, 'T');
+    auto altSeq = std::string(SHORT_SEQ_LEN, 'T');
     Cigar cigar("20M3D62M");
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
@@ -85,7 +91,7 @@ void startsWithInsertVariant()
 
     auto pos = 123;
     auto prefix = "A";
-    auto refSeq = std::string(82, 'T');
+    auto refSeq = std::string(SHORT_SEQ_LEN, 'T');
     auto altSeq = "TCG" + std::string(79, 'T');
     Cigar cigar("3I79M");
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
@@ -100,8 +106,8 @@ void startsWithDeleteVariant()
 
     auto pos = 123;
     auto prefix = "A";
-    auto refSeq = "TCG" + std::string(82, 'T');
-    auto altSeq = std::string(82, 'T');
+    auto refSeq = "TCG" + std::string(SHORT_SEQ_LEN, 'T');
+    auto altSeq = std::string(SHORT_SEQ_LEN, 'T');
     Cigar cigar("3D79M");
     fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.forceFlush();
@@ -114,9 +120,9 @@ void variantsNotFlushedTooEarly()
     Fixture fixture;
 
     auto prefix = "A";
-    auto refSeq = std::string(82, 'T');
+    auto refSeq = std::string(SHORT_SEQ_LEN, 'T');
     auto altSeq = std::string(20, 'T') + "A" + std::string(61, 'T');
-    Cigar cigar("82M");
+    Cigar cigar(CIGAR_MATCH_SHORT);
 
     fixture.call(200, prefix, refSeq, altSeq, cigar.getEntries());
     fixture.call(300, prefix, refSeq, altSeq, cigar.getEntries());
@@ -144,17 +150,34 @@ void variantsNotDuplicated()
     auto refSeq = std::string(82, 'T');
     auto altSeq1 = std::string(20, 'T') + "A" + std::string(61, 'T');
     auto altSeq2 = "A" + std::string(81, 'T');
-    Cigar cigar("82M");
+    Cigar cigar(CIGAR_MATCH_SHORT);
 
     fixture.call(200, prefix, refSeq, altSeq1, cigar.getEntries());
     fixture.call(220, prefix, refSeq, altSeq2, cigar.getEntries());
 
-    fixture.flush(200 + 82);
+    fixture.flush(200 + SHORT_SEQ_LEN);
     assert(fixture.variants.empty());
 
-    fixture.flush(220 + 83);
+    fixture.flush(220 + SHORT_SEQ_LEN + 1);
     assert(fixture.variants.size() == 1);
     assert(fixture.variants[0] == "220 T,A");
+}
+
+void longerSequenceCalled()
+{
+    Fixture fixture(LONG_SEQ_LEN);
+
+    auto pos = 123;
+    auto prefix = "A";
+    auto refSeq = std::string(LONG_SEQ_LEN, 'T');
+    auto altSeq = std::string(120, 'T') + "AA" + std::string(28, 'T');
+    Cigar cigar(CIGAR_MATCH_LONG);
+
+    fixture.call(pos, prefix, refSeq, altSeq, cigar.getEntries());
+    fixture.forceFlush();
+
+    assert(fixture.variants[0] == "243 T,A");
+    assert(fixture.variants[1] == "244 T,A");
 }
 
 } // namespace test
@@ -170,6 +193,7 @@ int main()
     test::startsWithDeleteVariant();
     test::variantsNotFlushedTooEarly();
     test::variantsNotDuplicated();
+    test::longerSequenceCalled();
     std::cout << "[TEST] OK\n";
 }
 

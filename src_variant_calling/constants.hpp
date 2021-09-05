@@ -1,8 +1,6 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
-#define SEQ_READ_SIZE 82
-
 #define SAM_COLUMN_POSITION 3
 #define SAM_COLUMN_MAPQ     4
 #define SAM_COLUMN_CIGAR    5

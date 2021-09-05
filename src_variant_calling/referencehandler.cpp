@@ -3,13 +3,17 @@
 #include <cassert>
 #include <cstring>
 
-ReferenceHandler::ReferenceHandler(const std::string & path)
+ReferenceHandler::ReferenceHandler(const std::string & path, int seqLen)
     : InFileHandler(path)
+    , m_seqLen(seqLen)
 {
+    m_buffer = (char *)malloc(m_seqLen + 1);
     if (valid()) {
-        read(SEQ_READ_SIZE);
+        read(m_seqLen);
         m_sequence = m_buffer;
         m_prefix = WILDCARD_NUCLEOTIDE;
+        m_startPos = 1;
+        m_endPos = m_seqLen;
     }
 }
 
@@ -26,7 +30,7 @@ std::string ReferenceHandler::getSequence()
 void ReferenceHandler::seek(const size_t & pos)
 {
     auto readStartPos = pos;
-    auto readEndPos = readStartPos + SEQ_READ_SIZE - 1;
+    auto readEndPos = readStartPos + m_seqLen - 1;
 
     // Case 1: Read is the same as current reference
     if (readStartPos == m_startPos && readEndPos == m_endPos)
@@ -36,7 +40,7 @@ void ReferenceHandler::seek(const size_t & pos)
     else if (readStartPos > m_startPos && readEndPos > m_endPos && readStartPos < m_endPos) {
         auto trim = readStartPos - m_startPos;
         m_prefix = m_sequence.substr(trim - 1, 1);
-        m_sequence = m_sequence.substr(trim, SEQ_READ_SIZE - trim);
+        m_sequence = m_sequence.substr(trim, m_seqLen - trim);
         read(trim);
         m_sequence += m_buffer;
     }
@@ -47,7 +51,7 @@ void ReferenceHandler::seek(const size_t & pos)
         m_file.seekg(static_cast<long>(m_file.tellg()) + skip - 1);
         readPrefix();
         m_prefix = m_prefixBuffer;
-        read(SEQ_READ_SIZE);
+        read(m_seqLen);
         m_sequence = m_buffer;
     }
 
@@ -61,7 +65,7 @@ void ReferenceHandler::seek(const size_t & pos)
 
 void ReferenceHandler::read(const size_t & size)
 {
-    memset(m_buffer, 0, SEQ_READ_SIZE + 1);
+    memset(m_buffer, 0, m_seqLen + 1);
     m_file.read(m_buffer, size);
 }
 
