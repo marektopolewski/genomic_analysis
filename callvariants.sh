@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 print_help () {
     echo "Usage: callvariants.h <META> <SEQLEN>"

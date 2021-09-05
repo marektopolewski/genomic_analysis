@@ -1,28 +1,27 @@
-#!/bin/sh
+#!/bin/bash
 
 # Parse metadata argument
 if [[ -z "$1" ]] || [[ ! -f $1 ]]; then
     echo "No metadata list file supplied"
-    print_help
     exit 1
 fi
 METADATA_CSV=$1
 
 # setup downoald location
-if [ -d "data" ]; then
-    printf "Directory exists, are you sure you want to clear it? (y/N) "
-    read ALLOW_CLEAR
-    if [[ "$ALLOW_CLEAR" != "y" ]] && [[ "$ALLOW_CLEAR" != "Y" ]]; then
-        echo "Exiting..."
-        exit 1
-    fi
-    rm -rf data/*
-else
-    mkdir -p data
-fi
-cd data/
-mkdir chr5 chr20 chrX
-cd ../
+# if [ -d "data" ]; then
+#     printf "Directory exists, are you sure you want to clear it? (y/N) "
+#     read ALLOW_CLEAR
+#     if [[ "$ALLOW_CLEAR" != "y" ]] && [[ "$ALLOW_CLEAR" != "Y" ]]; then
+#         echo "Exiting..."
+#         exit 1
+#     fi
+#     rm -rf data/*
+# else
+#     mkdir -p data
+# fi
+# cd data/
+# mkdir chr5 chr20 chrX
+# cd ../
 
 # Regions of interest as per gene locations
 TP53_START_POS="32561406"
@@ -44,7 +43,7 @@ do
 
     # download BAM file
     gsutil cp \
-        "gs://gwas-os-test-3/$DIRECTORY/$BAM_FILE" \
+        "gs://gwas-os-test-2/$DIRECTORY/$BAM_FILE" \
         "data/$BAM_FILE"
     cd data/
 

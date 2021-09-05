@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # compile variant calling algorithm
 cd src_analysis/
